@@ -35,15 +35,25 @@ Both scripts select GPUs **identically**. Card order is pinned to the PCI bus
 (`CUDA_DEVICE_ORDER=PCI_BUS_ID`) and selection happens **before** the CUDA
 library is imported — otherwise the flag has no effect.
 
+**Recommended form** — set the variables in the shell, before Python starts.
+This is the most reliable method: the variables exist before the process
+begins, so nothing inside the script can affect them. This is the exact form
+used to obtain full utilization on a bridged NVLink pair.
+
 ```bash
 # one card
-python aime_eval_ania.py --gpus 0
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 python aime_eval_ania.py
 
-# two cards (recommended for the full AIME context)
-python aime_eval_ania.py --gpus 1,3
-
-# or via environment variables
+# two cards, bridged NVLink pair (recommended for the full AIME context)
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=1,3 python aime_eval_ania.py
+```
+
+The `--gpus` flag is also available as a convenience (it sets the same variable
+before the CUDA library is imported), but the shell form above is the one we
+recommend and tested:
+
+```bash
+python aime_eval_ania.py --gpus 1,3
 ```
 
 > **Multi-GPU note.** If you have a mixed topology (some cards bridged with
@@ -83,16 +93,18 @@ Supported keys: question -- `question` or `problem`; answer -- `answer`,
 `final_answer` or `ground_truth`. Line order = task `id`.
 
 ```bash
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=1,3 \
 python aime_eval_ania.py \
     --model brainhome/Ania_11B_Research_Preview \
-    --aime your_tasks.jsonl \
-    --gpus 1,3
+    --aime your_tasks.jsonl
 
 # first batch only (e.g. tasks 1-15)
-python aime_eval_ania.py --aime your_tasks.jsonl --limit-aime 15 --gpus 1,3
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=1,3 \
+python aime_eval_ania.py --aime your_tasks.jsonl --limit-aime 15
 
 # second batch (skip the first 15, run the rest)
-python aime_eval_ania.py --aime your_tasks.jsonl --skip-aime 15 --gpus 1,3
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=1,3 \
+python aime_eval_ania.py --aime your_tasks.jsonl --skip-aime 15
 ```
 
 ### Test scope
