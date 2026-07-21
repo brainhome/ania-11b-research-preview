@@ -35,25 +35,15 @@ Both scripts select GPUs **identically**. Card order is pinned to the PCI bus
 (`CUDA_DEVICE_ORDER=PCI_BUS_ID`) and selection happens **before** the CUDA
 library is imported — otherwise the flag has no effect.
 
-**Recommended form** — set the variables in the shell, before Python starts.
-This is the most reliable method: the variables exist before the process
-begins, so nothing inside the script can affect them. This is the exact form
-used to obtain full utilization on a bridged NVLink pair.
+Select cards by setting the environment variables in the shell, before Python
+starts:
 
 ```bash
 # one card
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 python aime_eval_ania.py
 
-# two cards, bridged NVLink pair (recommended for the full AIME context)
+# two cards (use a bridged NVLink pair for the full AIME context)
 CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=1,3 python aime_eval_ania.py
-```
-
-The `--gpus` flag is also available as a convenience (it sets the same variable
-before the CUDA library is imported), but the shell form above is the one we
-recommend and tested:
-
-```bash
-python aime_eval_ania.py --gpus 1,3
 ```
 
 > **Multi-GPU note.** If you have a mixed topology (some cards bridged with
@@ -67,7 +57,8 @@ python aime_eval_ania.py --gpus 1,3
 ## Chat panel
 
 ```bash
-python ania_inference_panel_Preview_.py --model brainhome/Ania_11B_Research_Preview --gpus 0
+CUDA_DEVICE_ORDER=PCI_BUS_ID CUDA_VISIBLE_DEVICES=0 \
+    python ania_inference_panel_Preview_.py --model brainhome/Ania_11B_Research_Preview
 ```
 
 The panel loads the model on **one** card (Unsloth backend) and opens a local
