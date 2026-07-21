@@ -77,8 +77,8 @@ from unsloth import FastLanguageModel
 # ============================================================
 
 DEFAULT_CONFIG = {
-    "MODEL_PATH": "models/Ania_11B_Research_Preview",
-    "AIME_FILE": "test/aime2026.jsonl",
+    "MODEL_PATH": "brainhome/Ania_11B_Research_Preview",
+    "AIME_FILE": "aime2026.jsonl",
 
     "OUTPUT_ROOT": "raporty_testowe",
 
